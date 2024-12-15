@@ -18,10 +18,10 @@ private:
 };
 
 void pmr_complex_example() {
-  zig::pmr::GeneralProposalAllocator zi;
+  zig::pmr::GeneralPurposeAllocator gpa;
 
   // Use the memory resource for vector allocation
-  std::pmr::vector<ComplexObject> objects{&zi};
+  std::pmr::vector<ComplexObject> objects{&gpa};
 
   // Add objects using the custom memory resource
   objects.emplace_back("Alpha", 100);

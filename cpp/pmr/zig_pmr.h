@@ -13,7 +13,7 @@ bool leaked();
 
 namespace zig::pmr {
 
-class GeneralProposalAllocator : public std::pmr::memory_resource {
+class GeneralPurposeAllocator : public std::pmr::memory_resource {
 public:
   void *do_allocate(std::size_t bytes, [[maybe_unused]] std::size_t alignment =
                                            alignof(std::max_align_t)) override {
