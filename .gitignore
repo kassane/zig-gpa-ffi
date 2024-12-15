@@ -1,2 +1,6 @@
-.zig-cache/
-zig-out/
+target/
+build/
+*zig-*/
+*.o*
+*.lock
+*.a
