@@ -8,16 +8,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: mlugg/setup-zig@v1
+        with:
+          version: master
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           override: true
       
-      - name: cpp (new-override) build and run
-        working-directory: cpp
-        run: zig build run-new_override
       - name: cpp (pmr) build and run
         working-directory: cpp
-        run: zig build run-pmr
+        run: zig build run-pmr -Doptimize=ReleaseSafe
+      - name: cpp (new-override) build and run
+        working-directory: cpp
+        run: zig build run-new_override -Doptimize=ReleaseSafe
       - name: rust build and run
-        run: cargo run
+        working-directory: rust
+        run: cargo run --release
