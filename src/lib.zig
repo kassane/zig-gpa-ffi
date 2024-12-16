@@ -3,6 +3,7 @@
 // default page_allocator (backing allocation)
 var gpa = std.heap.GeneralPurposeAllocator(.{
     .verbose_log = true,
+    .thread_safe = true,
 }){};
 const allocator = gpa.allocator();
 

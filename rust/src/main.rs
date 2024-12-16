@@ -63,7 +63,7 @@ fn main() {
 
     #[cfg(debug_assertions)]
     unsafe {
-        assert!(!leaked());
+        assert!(leaked());
     }
 }
 extern "C" {

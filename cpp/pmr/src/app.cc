@@ -1,36 +1,37 @@
 
 #include <iostream>
-#include <vector>
+#include <unordered_map>
 #include <zig_pmr.h>
 
-class ComplexObject {
+class KeyPair {
 public:
-  ComplexObject(std::string name, int value)
-      : name_(std::move(name)), value_(value) {}
+  KeyPair(std::pmr::string key, int value)
+      : key_(std::move(key)), value_(value) {}
 
   void print() const {
-    std::cout << "Name: " << name_ << ", Value: " << value_ << std::endl;
+    std::cout << "Key: " << key_ << ", Value: " << value_ << std::endl;
   }
 
+  std::pmr::string getKey() const { return key_; }
+  int getValue() const { return value_; }
+
 private:
-  std::string name_;
+  std::pmr::string key_;
   int value_;
 };
 
-void pmr_complex_example() {
+int main() {
   zig::pmr::GeneralPurposeAllocator gpa;
+  std::pmr::set_default_resource(&gpa);
 
-  // Use the memory resource for vector allocation
-  std::pmr::vector<ComplexObject> objects{&gpa};
+  std::pmr::unordered_map<std::pmr::string, KeyPair> hashmap{};
 
-  // Add objects using the custom memory resource
-  objects.emplace_back("Alpha", 100);
-  objects.emplace_back("Beta", 200);
-  objects.emplace_back("Gamma", 300);
+  hashmap.emplace("first", KeyPair("Alpha", 100));
+  hashmap.emplace("second", KeyPair("Beta", 200));
+  hashmap.emplace("third", KeyPair("Gamma", 300));
 
-  // Print objects
-  for (const auto &obj : objects) {
-    obj.print();
+  for (const auto &[key, pair] : hashmap) {
+    pair.print();
   }
 
 #ifdef DEBUG
@@ -38,9 +39,6 @@ void pmr_complex_example() {
     std::cerr << "Memory leak detected!" << std::endl;
   }
 #endif
-}
 
-int main() {
-  pmr_complex_example();
   return 0;
 }
