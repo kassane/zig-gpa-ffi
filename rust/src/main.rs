@@ -17,9 +17,6 @@ unsafe impl GlobalAlloc for ZigAllocator {
         }
     }
     unsafe fn alloc_zeroed(&self, layout: Layout) -> *mut u8 {
-        if layout.size() == 0 {
-            return std::ptr::null_mut();
-        }
         let ptr = self.alloc(layout);
         if !ptr.is_null() {
             unsafe {
@@ -29,19 +26,15 @@ unsafe impl GlobalAlloc for ZigAllocator {
         ptr
     }
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
-        if new_size == 0 {
+        let new_layout = unsafe { Layout::from_size_align_unchecked(new_size, layout.align()) };
+        let new_ptr = unsafe { zigRealloc(ptr, new_layout.size(), new_size) };
+        if !new_ptr.is_null() {
             unsafe {
-                zigFree(ptr, layout.size());
-            }
-            return std::ptr::null_mut();
-        }
-        let ptr = unsafe { zigRealloc(ptr, layout.size(), new_size) };
-        if !ptr.is_null() {
-            unsafe {
-                std::ptr::copy_nonoverlapping(ptr, ptr, new_size);
+                std::ptr::copy_nonoverlapping(ptr, new_ptr, std::cmp::min(layout.size(), new_size));
+                self.dealloc(ptr, layout);
             }
         }
-        ptr
+        new_ptr
     }
 }
 
