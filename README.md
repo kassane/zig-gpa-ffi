@@ -5,7 +5,7 @@ Testing [`std.heap.GeneralPurposeAllocator`](https://ziglang.org/documentation/m
 ## Required
 
 - Zig 0.13.0 or master
-- Rust 1.68.0 or nightly
+- Rust 1.82.0 or nightly
 
 ## Some references for tests
 

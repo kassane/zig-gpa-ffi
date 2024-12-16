@@ -23,7 +23,7 @@ fn main() {
         .arg("-target")
         .arg(
             if cfg!(target_os = "windows") && cfg!(target_env = "msvc") {
-                "x86_64-windows-msvc"
+                "native-windows-msvc" // x86/x86_64/arm64-windows-msvc
             } else {
                 "native-native" // default target
             },
