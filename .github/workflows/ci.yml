@@ -20,10 +20,10 @@ jobs:
       
       - name: cpp (pmr) build and run
         working-directory: cpp
-        run: zig build run-pmr -Doptimize=ReleaseSafe
+        run: zig build run-pmr
       - name: cpp (new-override) build and run
         working-directory: cpp
-        run: zig build run-new_override -Doptimize=ReleaseSafe
+        run: zig build run-new_override
       - name: rust build and run
         working-directory: rust
-        run: cargo run --release
+        run: cargo run
