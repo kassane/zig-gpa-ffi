@@ -10,7 +10,7 @@ fn main() {
     // Use zig page_allocator (backing allocator) - replace libc to syscall
     std::process::Command::new("zig")
         .arg("build-lib")
-        .arg("../src/lib.zig")
+        .arg("../zig/src/lib.zig")
         .arg(if cfg!(debug_assertions) {
             "-ODebug"
         } else {
