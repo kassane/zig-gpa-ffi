@@ -1,0 +1,14 @@
+{
+	"name": "app",
+	"description": "Use zig GPA in D app.",
+	"license": "MIT",
+	"authors": [
+		"Matheus Catarino França"
+	],
+	"preBuildCommands": [
+		"zig build-lib -lc -dynamic -fcompiler-rt --name zalloc ../zig/src/lib.zig"
+	],
+	"lflags": [
+		"-L$PACKAGE_DIR"
+	]
+}
