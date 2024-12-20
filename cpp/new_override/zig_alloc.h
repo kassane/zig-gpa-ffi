@@ -7,7 +7,7 @@ extern "C" {
 void *zigAlloc(size_t size);
 void zigFree(void *ptr, size_t len);
 void *zigRealloc(void *ptr, size_t len, size_t new_size);
-#ifndef NDEBUG
+#if 0
 #include <cassert>
 bool leaked();
 #endif

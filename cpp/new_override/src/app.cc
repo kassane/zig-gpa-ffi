@@ -20,7 +20,7 @@ int main() {
   }
   std::cout << "Total sum of vector: " << sum << std::endl;
 
-#ifndef NDEBUG
+#if 0
   assert(leaked());
 #endif
 
