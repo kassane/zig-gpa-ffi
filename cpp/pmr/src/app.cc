@@ -34,7 +34,7 @@ int main() {
     pair.print();
   }
 
-#ifdef DEBUG
+#ifndef NDEBUG
   if (leaked()) {
     std::cerr << "Memory leak detected!" << std::endl;
   }
