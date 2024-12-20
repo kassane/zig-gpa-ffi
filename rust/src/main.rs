@@ -9,10 +9,10 @@ unsafe impl GlobalAlloc for ZigAllocator {
         }
         unsafe { zigAlloc(layout.size()) }
     }
-    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+    unsafe fn dealloc(&self, ptr: *mut u8, _layout: Layout) {
         if !ptr.is_null() {
             unsafe {
-                zigFree(ptr, layout.size());
+                zigFree(ptr);
             };
         }
     }
@@ -26,8 +26,7 @@ unsafe impl GlobalAlloc for ZigAllocator {
         ptr
     }
     unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, new_size: usize) -> *mut u8 {
-        let new_layout = unsafe { Layout::from_size_align_unchecked(new_size, layout.align()) };
-        let new_ptr = unsafe { zigRealloc(ptr, new_layout.size(), new_size) };
+        let new_ptr = unsafe { zigRealloc(ptr, new_size) };
         if !new_ptr.is_null() {
             unsafe {
                 std::ptr::copy_nonoverlapping(ptr, new_ptr, std::cmp::min(layout.size(), new_size));
@@ -61,8 +60,8 @@ fn main() {
 }
 extern "C" {
     fn zigAlloc(size: usize) -> *mut u8;
-    fn zigFree(ptr: *mut u8, len: usize);
-    fn zigRealloc(ptr: *mut u8, len: usize, new_size: usize) -> *mut u8;
+    fn zigFree(ptr: *mut u8);
+    fn zigRealloc(ptr: *mut u8, new_size: usize) -> *mut u8;
     #[cfg(debug_assertions)]
     fn leaked() -> bool;
 }
