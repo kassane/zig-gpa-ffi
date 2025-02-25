@@ -1,6 +1,6 @@
 # zig-gpa-ffi
 
-Testing [`std.heap.GeneralPurposeAllocator`](https://ziglang.org/documentation/master/std/#std.heap.GeneralPurposeAllocator) in FFI.
+Testing [`std.heap.DebugAllocator`](https://ziglang.org/documentation/master/std/#std.heap.DebugAllocator) in FFI.
 
 ## Required
 

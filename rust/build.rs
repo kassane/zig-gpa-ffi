@@ -8,7 +8,7 @@ fn main() {
     }
 
     // Use zig page_allocator (backing allocator) - replace libc to syscall
-    std::process::Command::new("zig")
+    let zalloc_build_status = std::process::Command::new("zig")
         .arg("build-lib")
         .arg("../zig/src/lib.zig")
         .arg(if cfg!(debug_assertions) {
@@ -31,6 +31,10 @@ fn main() {
         .status()
         .expect("Failed to run zig build-lib");
 
+    if !zalloc_build_status.success() {
+        panic!("Failed to build zalloc library");
+    }
+    println!("cargo:rerun-if-changed=../zig/src/lib.zig");
     println!("cargo:rerun-if-changed=src/main.rs");
     println!("cargo:rustc-link-lib=zalloc");
     println!(

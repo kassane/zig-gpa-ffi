@@ -1,18 +1,39 @@
 // zig build-lib -OReleaseSafe -fcompiler-rt src/lib.zig --name zalloc -fPIE
 const std = @import("std");
+const builtin = @import("builtin");
+const native_os = builtin.os.tag;
 
 const alloc_metadata_len = std.mem.alignForward(usize, @alignOf(usize), @sizeOf(usize));
 
 // default page_allocator (backing allocation)
-var gpa = std.heap.GeneralPurposeAllocator(.{
+var debug_allocator: std.heap.DebugAllocator(.{
     .verbose_log = true,
     .thread_safe = true,
-}){};
-const allocator = gpa.allocator();
+}) = .init;
+var dbg_mode = false;
+
+fn allocator() std.mem.Allocator {
+    const gpa, const is_debug = gpa: {
+        if (native_os == .wasi) break :gpa .{ std.heap.wasm_allocator, false };
+        break :gpa switch (builtin.mode) {
+            .Debug, .ReleaseSafe => .{ debug_allocator.allocator(), true },
+            .ReleaseFast, .ReleaseSmall => .{ std.heap.smp_allocator, false },
+        };
+    };
+    dbg_mode = is_debug;
+    return gpa;
+}
+
+// FIXME: Try to use on C++/Rust RAII to avoid calling deinit()
+export fn deinit() void {
+    if (dbg_mode) {
+        _ = debug_allocator.deinit();
+    }
+}
 
 export fn zigAlloc(size: usize) ?[*]u8 {
     const total_size = size + alloc_metadata_len;
-    const buf = allocator.alloc(u8, total_size) catch return null;
+    const buf = allocator().alloc(u8, total_size) catch return null;
 
     // Store the size before the actual data
     @as(*usize, @ptrCast(@alignCast(buf.ptr))).* = size;
@@ -32,7 +53,7 @@ fn getBuf(ptr: [*]u8) []u8 {
 }
 
 export fn zigFree(ptr: ?[*]u8) callconv(.C) void {
-    if (ptr) |p| allocator.free(getBuf(p));
+    if (ptr) |p| allocator().free(getBuf(p));
 }
 
 export fn zigRealloc(ptr: ?[*]u8, new_size: usize) callconv(.C) ?[*]u8 {
@@ -46,7 +67,7 @@ export fn zigRealloc(ptr: ?[*]u8, new_size: usize) callconv(.C) ?[*]u8 {
 
     const old_buf = getBuf(ptr.?);
     // Realloc the buffer including metadata
-    const new_buf = allocator.realloc(old_buf, new_size + alloc_metadata_len) catch |err| {
+    const new_buf = allocator().realloc(old_buf, new_size + alloc_metadata_len) catch |err| {
         std.log.err("realloc failed: {s}", .{@errorName(err)});
         return null;
     };
@@ -64,7 +85,7 @@ export fn zigCalloc(nmemb: usize, size: usize) callconv(.C) ?[*]u8 {
 }
 
 export fn leaked() callconv(.C) bool {
-    return gpa.detectLeaks();
+    return debug_allocator.detectLeaks();
 }
 
 // ----- Cstd compat -----

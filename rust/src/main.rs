@@ -62,6 +62,7 @@ extern "C" {
     fn zigAlloc(size: usize) -> *mut u8;
     fn zigFree(ptr: *mut u8);
     fn zigRealloc(ptr: *mut u8, new_size: usize) -> *mut u8;
+    // fn deinit();
     // #[cfg(debug_assertions)]
     // fn leaked() -> bool;
 }
