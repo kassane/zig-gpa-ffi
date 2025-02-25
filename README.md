@@ -4,7 +4,7 @@ Testing [`std.heap.DebugAllocator`](https://ziglang.org/documentation/master/std
 
 ## Required
 
-- Zig 0.13.0 or master
+- Zig 0.14.0 or master
 - Rust 1.82.0 or nightly
 
 ## Some references for tests
