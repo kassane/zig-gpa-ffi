@@ -7,6 +7,16 @@ Testing [`std.heap.DebugAllocator`](https://ziglang.org/documentation/master/std
 - Zig 0.14.0 or master
 - Rust 1.82.0 or nightly
 
+It is also possible to preload in the posix environment.
+
+```console
+zig build-lib -dynamic zig/src/lib.zig --name zalloc
+```
+
+```bash
+LD_PRELOAD=libzalloc.so {app}
+```
+
 ## Some references for tests
 
 - Rust [Global Allocator](https://doc.rust-lang.org/std/alloc/trait.GlobalAlloc.html)
